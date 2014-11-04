@@ -38,9 +38,10 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem "therubyracer"
-gem 'simple_form'
+gem "therubyracer",  platforms: :ruby
+# gem 'simple_form'
+gem 'simple_form', '3.1.0.rc2'
 gem 'less-rails'
 gem 'twitter-bootstrap-rails'
-
+gem 'enum_help'
 

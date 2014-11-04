@@ -10,8 +10,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-# config.vm.box = "centos6.5_x86_64"
-config.vm.box = "centos6.5_base"
+  # config.vm.box = "centos6.5_x86_64"
+  config.vm.box = "centos6.5_base"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -26,14 +26,8 @@ config.vm.box = "centos6.5_base"
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
-config.vm.network "forwarded_port", guest: 3000, host: 13000
-config.vm.hostname = "vagrant.example.com"
-
-   config.vm.provider "virtualbox" do |vb| 
-     vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
-     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
-   end
-
+  config.vm.network "forwarded_port", guest: 3000, host: 13000
+  config.vm.hostname = "vagrant.example.com"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -54,14 +48,17 @@ config.vm.hostname = "vagrant.example.com"
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
-  #
+  config.vm.provider "virtualbox" do |vb|
+    # Don't boot with headless mode
+    vb.gui = true
+
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+  end
+
   # View the documentation for the provider you're using for more
   # information on available options.
 
@@ -71,13 +68,13 @@ config.vm.hostname = "vagrant.example.com"
   # the file default.pp in the manifests_path directory.
   #
   config.vm.provision :shell do |shell|
-  shell.inline = "mkdir -p /etc/puppet/modules;
+    shell.inline = "mkdir -p /etc/puppet/modules;
                   puppet module install -i /etc/puppet/modules jdowning-rbenv;
                   puppet module install -i /etc/puppet/modules puppetlabs-firewall;"
   end
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "puppet/manifests"
-    puppet.manifest_file  = "default.pp"
+    puppet.manifest_file = "default.pp"
   end
 end

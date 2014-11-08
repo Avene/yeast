@@ -30,7 +30,7 @@ gem 'spring',        group: :development
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -44,4 +44,9 @@ gem 'simple_form', '3.1.0.rc2'
 gem 'less-rails'
 gem 'twitter-bootstrap-rails'
 gem 'enum_help'
+gem 'haml-rails'
 
+group :test, :development do
+  gem 'rspec-rails', '~> 3.0.0'
+  gem "factory_girl_rails"
+end

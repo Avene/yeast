@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  resources :beers
+
+  # for devise
+  devise_for :users, controllers: {sessions: 'users/sessions'}
+# 2. Ensure you have defined root_url to *something* in your config/routes.rb.
+# For example:
+  root to: "beers#index"
 
   resources :beers
 

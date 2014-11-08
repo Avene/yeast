@@ -39,6 +39,9 @@ gem 'unicorn'
 # gem 'debugger', group: [:development, :test]
 
 gem "therubyracer",  platforms: :ruby
+
+gem "devise"
+
 # gem 'simple_form'
 gem 'simple_form', '3.1.0.rc2'
 gem 'less-rails'
@@ -46,7 +49,16 @@ gem 'twitter-bootstrap-rails'
 gem 'enum_help'
 gem 'haml-rails'
 
-group :test, :development do
-  gem 'rspec-rails', '~> 3.0.0'
-  gem "factory_girl_rails"
+group :development, :test do
+  gem "rspec-rails", "~> 3.1.0"
+  gem "factory_girl_rails", "~> 4.4.1"
 end
+
+group :test do
+  gem "capybara"
+  gem "database_cleaner"
+  gem "faker"
+  gem "launchy"
+  gem "selenium-webdriver"
+end
+

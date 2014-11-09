@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :beer_rating do
-    beer nil
-    user nil
+    association :beer
+    association :user
     rate 1
     review "MyString"
   end

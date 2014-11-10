@@ -7,4 +7,6 @@ class BeerRating < ActiveRecord::Base
                             { :greater_than_or_equal_to => 1,
                               :less_than_or_equal_to => 5 }
   # validates_associated :beer, :user
+
+  scope :rated_at, -> (rate) {where(rate: rate).order(rate: :desc)}
 end

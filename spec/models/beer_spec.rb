@@ -27,6 +27,7 @@ RSpec.describe Beer, :type => :model do
   it "has a valid factory" do
     expect(build(:beer)).to be_valid
   end
+
   describe 'returns a rate average' do
     before :each do
       # 9 / 7 = 1.285....
@@ -60,6 +61,32 @@ RSpec.describe Beer, :type => :model do
     it "rounded 4 down to two decimal places" do
       expect(@beer_rated_1_point_444.average_rating).to eq 1.44
     end
+  end
 
+  describe 'filtered by average ratings' do
+    before (:each) do
+      @beer1 = create(:beer, name: 'SuperDry')
+      create(:beer_rating, rate: 5, beer: @beer1)
+      create(:beer_rating, rate: 4, beer: @beer1)
+
+      @beer2 = create(:beer, name: 'Guiness')
+      create(:beer_rating, rate: 4, beer: @beer2)
+      create(:beer_rating, rate: 3, beer: @beer2)
+
+      @beer3 = create(:beer, name: 'Premium Molts')
+      create(:beer_rating, rate: 3, beer: @beer3)
+      create(:beer_rating, rate: 2, beer: @beer3)
+
+      @beer4 = create(:beer, name: 'Black Label')
+      create(:beer_rating, rate: 2, beer: @beer4)
+      create(:beer_rating, rate: 1, beer: @beer4)
+
+      @beer5 = create(:beer, name: 'Heineken')
+    end
+
+    it 'expect returns beers whose ratings over specified value' do
+      beers = Beer.rated_over(3)
+      expect(beers).to match_array([@beer1, @beer2])
+    end
   end
 end

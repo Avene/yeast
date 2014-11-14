@@ -5,13 +5,13 @@ class Beer < ActiveRecord::Base
 
   has_many :beer_ratings
 
-  scope :rated_over,
+  scope :rated_than,
         lambda{ |rate|
           where(:id => BeerRating.select(:beer_id).having('avg(rate) >= ?', rate).group(:beer_id))
         }
 
   # returns rating average, half up 3rd places of decimals
-  def average_rating()
+  def average_rating
     return beer_ratings.average(:rate).round(2, :half_up)
   end
 end

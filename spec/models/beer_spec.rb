@@ -85,8 +85,11 @@ RSpec.describe Beer, :type => :model do
     end
 
     it 'expect returns beers whose ratings over specified value' do
-      beers = Beer.rated_over(3)
-      expect(beers).to match_array([@beer1, @beer2])
+      expect(Beer.rated_than(3)).to match_array([@beer1, @beer2])
+    end
+
+    it 'omits results that do not match' do
+      expect(Beer.rated_than(1)).not_to include [@beer4, @beer5]
     end
   end
 end

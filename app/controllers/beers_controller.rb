@@ -4,7 +4,11 @@ class BeersController < ApplicationController
   # GET /beers
   # GET /beers.json
   def index
-    @beers = Beer.all
+    if params[:rated_than]
+      @beers = Beer.rated_than(params[:rated_than].to_i)
+    else
+      @beers = Beer.all
+    end
   end
 
   # GET /beers/1

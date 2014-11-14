@@ -22,13 +22,14 @@ RSpec.describe BeersController, :type => :controller do
 
   # This should return the minimal set of attributes required to create a valid
   # Beer. As you add validations to Beer, be sure to
-  # adjust the attributes here as well.
+  # adjust the attributes here as
+  # well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    attributes_for(:beer)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    attributes_for(:beer_without_name)
   }
 
   # This should return the minimal set of values that should be in the session
@@ -37,18 +38,59 @@ RSpec.describe BeersController, :type => :controller do
   let(:valid_session) { {} }
 
   describe "GET index" do
-    it "assigns all beers as @beers" do
-      beer = Beer.create! valid_attributes
+    before (:each) do
+      @beer1 = Beer.create! valid_attributes
+      @beer2 = Beer.create! valid_attributes
+      @beer3 = Beer.create! valid_attributes
+      @beer4 = Beer.create! valid_attributes
+      @beer5 = Beer.create! valid_attributes
+    end
+
+    it "assigns all beers as @beers with no condition params" do
       get :index, {}, valid_session
-      expect(assigns(:beers)).to eq([beer])
+      expect(assigns(:beers)).to match_array([@beer1, @beer2, @beer3, @beer4, @beer5])
+    end
+
+    it "renders the :index template" do
+      get :index, {}, valid_session
+      expect(response).to render_template :index
+    end
+
+    it "assigns only a rated beers as @beers with rated_than param" do
+      create(:beer_rating, rate: 5, beer: @beer1)
+      create(:beer_rating, rate: 4, beer: @beer1)
+
+      create(:beer_rating, rate: 4, beer: @beer2)
+      create(:beer_rating, rate: 3, beer: @beer2)
+
+      create(:beer_rating, rate: 3, beer: @beer3)
+      create(:beer_rating, rate: 2, beer: @beer3)
+
+      create(:beer_rating, rate: 2, beer: @beer4)
+      create(:beer_rating, rate: 1, beer: @beer4)
+
+      get :index, {rated_than: 3}, valid_session
+      expect(assigns(:beers)).to match_array([@beer1, @beer2])
     end
   end
 
   describe "GET show" do
+    before (:each) do
+      @beer1 = Beer.create! valid_attributes
+      @beer2 = Beer.create! valid_attributes
+      @beer3 = Beer.create! valid_attributes
+      @beer4 = Beer.create! valid_attributes
+      @beer5 = Beer.create! valid_attributes
+    end
     it "assigns the requested beer as @beer" do
-      beer = Beer.create! valid_attributes
-      get :show, {:id => beer.to_param}, valid_session
-      expect(assigns(:beer)).to eq(beer)
+      # get :show, {:id => @beer1}, valid_session
+      get :show, {id: @beer1.to_param}, valid_session
+      expect(assigns(:beer)).to eq(@beer1)
+    end
+
+    it "renders ther :index template" do
+      get :show, {:id => @beer1}, valid_session
+      expect(response).to render_template :show
     end
   end
 
@@ -155,5 +197,4 @@ RSpec.describe BeersController, :type => :controller do
       expect(response).to redirect_to(beers_url)
     end
   end
-
 end

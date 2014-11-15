@@ -37,180 +37,237 @@ RSpec.describe BeersController, :type => :controller do
   # BeersController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "GET index" do
-    before (:each) do
-      @beer1 = Beer.create! valid_attributes
-      @beer2 = Beer.create! valid_attributes
-      @beer3 = Beer.create! valid_attributes
-      @beer4 = Beer.create! valid_attributes
-      @beer5 = Beer.create! valid_attributes
-    end
 
-    it "assigns all beers as @beers with no condition params" do
-      get :index, {}, valid_session
-      expect(assigns(:beers)).to match_array([@beer1, @beer2, @beer3, @beer4, @beer5])
-    end
-
-    it "renders the :index template" do
-      get :index, {}, valid_session
-      expect(response).to render_template :index
-    end
-
-    it "assigns only a rated beers as @beers with rated_than param" do
-      create(:beer_rating, rate: 5, beer: @beer1)
-      create(:beer_rating, rate: 4, beer: @beer1)
-
-      create(:beer_rating, rate: 4, beer: @beer2)
-      create(:beer_rating, rate: 3, beer: @beer2)
-
-      create(:beer_rating, rate: 3, beer: @beer3)
-      create(:beer_rating, rate: 2, beer: @beer3)
-
-      create(:beer_rating, rate: 2, beer: @beer4)
-      create(:beer_rating, rate: 1, beer: @beer4)
-
-      get :index, {rated_than: 3}, valid_session
-      expect(assigns(:beers)).to match_array([@beer1, @beer2])
-    end
-  end
-
-  describe "GET show" do
-    before (:each) do
-      @beer1 = Beer.create! valid_attributes
-      @beer2 = Beer.create! valid_attributes
-      @beer3 = Beer.create! valid_attributes
-      @beer4 = Beer.create! valid_attributes
-      @beer5 = Beer.create! valid_attributes
-    end
-    it "assigns the requested beer as @beer" do
-      # get :show, {:id => @beer1}, valid_session
-      get :show, {id: @beer1.to_param}, valid_session
-      expect(assigns(:beer)).to eq(@beer1)
-    end
-
-    it "renders the :index template" do
-      get :show, {:id => @beer1}, valid_session
-      expect(response).to render_template :show
-    end
-  end
-
-  describe "GET new" do
-    it "assigns a new beer as @beer" do
-      get :new, {}, valid_session
-      expect(assigns(:beer)).to be_a_new(Beer)
-    end
-
-    it "renders the :new template" do
-      get :new, {}, valid_session
-      expect(request).to render_template :new
-    end
-  end
-
-  describe "GET edit" do
-    it "assigns the requested beer as @beer" do
-      beer = Beer.create! valid_attributes
-      get :edit, {:id => beer.to_param}, valid_session
-      expect(assigns(:beer)).to eq(beer)
-    end
-
-    it 'renders the edit template' do
-      beer = Beer.create! valid_attributes
-      get :edit, {:id => beer.to_param}, valid_session
-      expect(request).to render_template :edit
-    end
-  end
-
-  describe "POST create" do
-    describe "with valid params" do
-      it "creates a new Beer" do
-        expect {
-          post :create, {:beer => valid_attributes}, valid_session
-        }.to change(Beer, :count).by(1)
+  shared_examples 'public_access' do
+    describe "GET index" do
+      before (:each) do
+        @beer1 = Beer.create! valid_attributes
+        @beer2 = Beer.create! valid_attributes
+        @beer3 = Beer.create! valid_attributes
+        @beer4 = Beer.create! valid_attributes
+        @beer5 = Beer.create! valid_attributes
       end
 
-      it "assigns a newly created beer as @beer" do
-        post :create, {:beer => valid_attributes}, valid_session
-        expect(assigns(:beer)).to be_a(Beer)
-        expect(assigns(:beer)).to be_persisted
+      it "assigns all beers as @beers with no condition params" do
+        get :index, {}, valid_session
+        expect(assigns(:beers)).to match_array([@beer1, @beer2, @beer3, @beer4, @beer5])
       end
 
-      it "redirects to the created beer" do
-        post :create, {:beer => valid_attributes}, valid_session
-        expect(response).to redirect_to(Beer.last)
+      it "renders the :index template" do
+        get :index, {}, valid_session
+        expect(response).to render_template :index
+      end
+
+      it "assigns only a rated beers as @beers with rated_than param" do
+        create(:beer_rating, rate: 5, beer: @beer1)
+        create(:beer_rating, rate: 4, beer: @beer1)
+
+        create(:beer_rating, rate: 4, beer: @beer2)
+        create(:beer_rating, rate: 3, beer: @beer2)
+
+        create(:beer_rating, rate: 3, beer: @beer3)
+        create(:beer_rating, rate: 2, beer: @beer3)
+
+        create(:beer_rating, rate: 2, beer: @beer4)
+        create(:beer_rating, rate: 1, beer: @beer4)
+
+        get :index, {rated_than: 3}, valid_session
+        expect(assigns(:beers)).to match_array([@beer1, @beer2])
       end
     end
 
-    describe "with invalid params" do
-      it "assigns a newly created but unsaved beer as @beer" do
-        post :create, {:beer => invalid_attributes}, valid_session
+    describe "GET show" do
+      before (:each) do
+        @beer1 = Beer.create! valid_attributes
+        @beer2 = Beer.create! valid_attributes
+        @beer3 = Beer.create! valid_attributes
+        @beer4 = Beer.create! valid_attributes
+        @beer5 = Beer.create! valid_attributes
+      end
+      it "assigns the requested beer as @beer" do
+        # get :show, {:id => @beer1}, valid_session
+        get :show, {id: @beer1.to_param}, valid_session
+        expect(assigns(:beer)).to eq(@beer1)
+      end
+
+      it "renders the :index template" do
+        get :show, {:id => @beer1}, valid_session
+        expect(response).to render_template :show
+      end
+    end
+  end
+
+  shared_examples 'authorized_access' do
+
+    describe "GET new" do
+      it "assigns a new beer as @beer" do
+        get :new, {}, valid_session
         expect(assigns(:beer)).to be_a_new(Beer)
       end
 
-      it "re-renders the 'new' template" do
-        post :create, {:beer => invalid_attributes}, valid_session
-        expect(response).to render_template("new")
+      it "renders the :new template" do
+        get :new, {}, valid_session
+        expect(request).to render_template :new
       end
     end
-  end
 
-  describe "PATCH update" do
-    before :each do
-      @beer = create(:beer)
-    end
-    describe "with valid params" do
-      let(:new_attributes) {
-        attributes_for(:beer, taste: 'Bitter')
-      }
-
-      it 'locates the requested @beer' do
-        patch :update, id: @beer, beer: attributes_for(:beer)
-        expect(assigns(:beer)).to eq @beer
-      end
-
-      it "updates the requested beer" do
-        patch :update, {:id => @beer, :beer => new_attributes}, valid_session
-        @beer.reload
-        expect(@beer.taste).to eq('Bitter')
-      end
-
+    describe "GET edit" do
       it "assigns the requested beer as @beer" do
-        patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
-        expect(assigns(:beer)).to eq(@beer)
-      end
-
-      it "redirects to the beer" do
-        patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
-        expect(response).to redirect_to(@beer)
-      end
-    end
-
-    describe "with invalid params" do
-      it "assigns the beer as @beer" do
         beer = Beer.create! valid_attributes
-        patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
+        get :edit, {:id => beer.to_param}, valid_session
         expect(assigns(:beer)).to eq(beer)
       end
 
-      it "re-renders the 'edit' template" do
+      it 'renders the edit template' do
         beer = Beer.create! valid_attributes
-        patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
-        expect(response).to render_template("edit")
+        get :edit, {:id => beer.to_param}, valid_session
+        expect(request).to render_template :edit
       end
     end
-  end
 
-  describe "DELETE destroy" do
-    it "destroys the requested beer" do
-      beer = Beer.create! valid_attributes
-      expect {
-        delete :destroy, {:id => beer.to_param}, valid_session
-      }.to change(Beer, :count).by(-1)
+    describe "POST create" do
+      describe "with valid params" do
+        it "creates a new Beer" do
+          expect {
+            post :create, {:beer => valid_attributes}, valid_session
+          }.to change(Beer, :count).by(1)
+        end
+
+        it "assigns a newly created beer as @beer" do
+          post :create, {:beer => valid_attributes}, valid_session
+          expect(assigns(:beer)).to be_a(Beer)
+          expect(assigns(:beer)).to be_persisted
+        end
+
+        it "redirects to the created beer" do
+          post :create, {:beer => valid_attributes}, valid_session
+          expect(response).to redirect_to(Beer.last)
+        end
+      end
+
+      describe "with invalid params" do
+        it "assigns a newly created but unsaved beer as @beer" do
+          post :create, {:beer => invalid_attributes}, valid_session
+          expect(assigns(:beer)).to be_a_new(Beer)
+        end
+
+        it "re-renders the 'new' template" do
+          post :create, {:beer => invalid_attributes}, valid_session
+          expect(response).to render_template("new")
+        end
+      end
     end
 
-    it "redirects to the beers list" do
-      beer = Beer.create! valid_attributes
-      delete :destroy, {:id => beer.to_param}, valid_session
-      expect(response).to redirect_to(beers_url)
+    describe "PATCH update" do
+      before :each do
+        @beer = create(:beer)
+      end
+      describe "with valid params" do
+        let(:new_attributes) {
+          attributes_for(:beer, taste: 'Bitter')
+        }
+
+        it 'locates the requested @beer' do
+          patch :update, id: @beer, beer: attributes_for(:beer)
+          expect(assigns(:beer)).to eq @beer
+        end
+
+        it "updates the requested beer" do
+          patch :update, {:id => @beer, :beer => new_attributes}, valid_session
+          @beer.reload
+          expect(@beer.taste).to eq('Bitter')
+        end
+
+        it "assigns the requested beer as @beer" do
+          patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
+          expect(assigns(:beer)).to eq(@beer)
+        end
+
+        it "redirects to the beer" do
+          patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
+          expect(response).to redirect_to(@beer)
+        end
+      end
+
+      describe "with invalid params" do
+        it "assigns the beer as @beer" do
+          beer = Beer.create! valid_attributes
+          patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
+          expect(assigns(:beer)).to eq(beer)
+        end
+
+        it "re-renders the 'edit' template" do
+          beer = Beer.create! valid_attributes
+          patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
+          expect(response).to render_template("edit")
+        end
+      end
+    end
+
+    describe "DELETE destroy" do
+      it "destroys the requested beer" do
+        beer = Beer.create! valid_attributes
+        expect {
+          delete :destroy, {:id => beer.to_param}, valid_session
+        }.to change(Beer, :count).by(-1)
+      end
+
+      it "redirects to the beers list" do
+        beer = Beer.create! valid_attributes
+        delete :destroy, {:id => beer.to_param}, valid_session
+        expect(response).to redirect_to(beers_url)
+      end
+    end
+
+
+  end
+
+  describe 'authorized access' do
+    before :each do
+      user = create(:user)
+      sign_in user
+    end
+    it_behaves_like 'public_access'
+    it_behaves_like 'authorized_access'
+  end
+
+  describe 'guest access' do
+
+    it_behaves_like 'public_access'
+
+    describe "GET new" do
+      it 'requires login' do
+        get :edit, id: create(:beer)
+        expect(response).to redirect_to new_user_session_url
+      end
+    end
+
+    describe "GET edit" do
+      it 'requires login' do
+        get :edit, id: create(:beer)
+        expect(response).to redirect_to new_user_session_url
+      end
+    end
+
+    describe "POST create" do
+      it 'requires login' do
+        get :edit, id: create(:beer)
+        expect(response).to redirect_to new_user_session_url
+      end
+    end
+
+    describe "PATCH update" do
+      it 'requires login' do
+        get :edit, id: create(:beer)
+        expect(response).to redirect_to new_user_session_url
+      end
+    end
+
+    describe "DELETE destroy" do
+      it 'requires login' do
+        get :edit, id: create(:beer)
+        expect(response).to redirect_to new_user_session_url
+      end
     end
   end
 end

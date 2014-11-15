@@ -1,5 +1,6 @@
 class BeersController < ApplicationController
   before_action :set_beer, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :edit, :update, :destroy]
 
   # GET /beers
   # GET /beers.json

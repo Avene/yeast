@@ -88,7 +88,7 @@ RSpec.describe BeersController, :type => :controller do
       expect(assigns(:beer)).to eq(@beer1)
     end
 
-    it "renders ther :index template" do
+    it "renders the :index template" do
       get :show, {:id => @beer1}, valid_session
       expect(response).to render_template :show
     end
@@ -99,6 +99,11 @@ RSpec.describe BeersController, :type => :controller do
       get :new, {}, valid_session
       expect(assigns(:beer)).to be_a_new(Beer)
     end
+
+    it "renders the :new template" do
+      get :new, {}, valid_session
+      expect(request).to render_template :new
+    end
   end
 
   describe "GET edit" do
@@ -106,6 +111,12 @@ RSpec.describe BeersController, :type => :controller do
       beer = Beer.create! valid_attributes
       get :edit, {:id => beer.to_param}, valid_session
       expect(assigns(:beer)).to eq(beer)
+    end
+
+    it 'renders the edit template' do
+      beer = Beer.create! valid_attributes
+      get :edit, {:id => beer.to_param}, valid_session
+      expect(request).to render_template :edit
     end
   end
 
@@ -142,42 +153,47 @@ RSpec.describe BeersController, :type => :controller do
     end
   end
 
-  describe "PUT update" do
+  describe "PATCH update" do
+    before :each do
+      @beer = create(:beer)
+    end
     describe "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        attributes_for(:beer, taste: 'Bitter')
       }
 
+      it 'locates the requested @beer' do
+        patch :update, id: @beer, beer: attributes_for(:beer)
+        expect(assigns(:beer)).to eq @beer
+      end
+
       it "updates the requested beer" do
-        beer = Beer.create! valid_attributes
-        put :update, {:id => beer.to_param, :beer => new_attributes}, valid_session
-        beer.reload
-        skip("Add assertions for updated state")
+        patch :update, {:id => @beer, :beer => new_attributes}, valid_session
+        @beer.reload
+        expect(@beer.taste).to eq('Bitter')
       end
 
       it "assigns the requested beer as @beer" do
-        beer = Beer.create! valid_attributes
-        put :update, {:id => beer.to_param, :beer => valid_attributes}, valid_session
-        expect(assigns(:beer)).to eq(beer)
+        patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
+        expect(assigns(:beer)).to eq(@beer)
       end
 
       it "redirects to the beer" do
-        beer = Beer.create! valid_attributes
-        put :update, {:id => beer.to_param, :beer => valid_attributes}, valid_session
-        expect(response).to redirect_to(beer)
+        patch :update, {:id => @beer.to_param, :beer => valid_attributes}, valid_session
+        expect(response).to redirect_to(@beer)
       end
     end
 
     describe "with invalid params" do
       it "assigns the beer as @beer" do
         beer = Beer.create! valid_attributes
-        put :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
+        patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
         expect(assigns(:beer)).to eq(beer)
       end
 
       it "re-renders the 'edit' template" do
         beer = Beer.create! valid_attributes
-        put :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
+        patch :update, {:id => beer.to_param, :beer => invalid_attributes}, valid_session
         expect(response).to render_template("edit")
       end
     end

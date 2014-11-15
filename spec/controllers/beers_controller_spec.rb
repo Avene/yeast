@@ -238,35 +238,35 @@ RSpec.describe BeersController, :type => :controller do
     describe "GET new" do
       it 'requires login' do
         get :edit, id: create(:beer)
-        expect(response).to redirect_to new_user_session_url
+        expect(response).to require_login
       end
     end
 
     describe "GET edit" do
       it 'requires login' do
         get :edit, id: create(:beer)
-        expect(response).to redirect_to new_user_session_url
+        expect(response).to require_login
       end
     end
 
     describe "POST create" do
       it 'requires login' do
         get :edit, id: create(:beer)
-        expect(response).to redirect_to new_user_session_url
+        expect(response).to require_login
       end
     end
 
     describe "PATCH update" do
       it 'requires login' do
         get :edit, id: create(:beer)
-        expect(response).to redirect_to new_user_session_url
+        expect(response).to require_login
       end
     end
 
     describe "DELETE destroy" do
       it 'requires login' do
         get :edit, id: create(:beer)
-        expect(response).to redirect_to new_user_session_url
+        expect(response).to require_login
       end
     end
   end

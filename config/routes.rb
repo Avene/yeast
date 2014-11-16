@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   # for devise
-  devise_for :users, controllers: {sessions: 'users/sessions'}
+  devise_for :users, controllers: {sessions: 'users/sessions', registrations: 'users/registrations'}
 # 2. Ensure you have defined root_url to *something* in your config/routes.rb.
 # For example:
   root to: "beers#index"

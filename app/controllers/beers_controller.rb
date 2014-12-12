@@ -6,7 +6,7 @@ class BeersController < ApplicationController
   # GET /beers.json
   def index
     if params[:rated_than]
-      @beers = Beer.rated_than(params[:rated_than].to_i)
+      @beers = Beer.rated_than(params[:rated_than].to_i).order(:id)
     else
       @beers = Beer.all
     end
